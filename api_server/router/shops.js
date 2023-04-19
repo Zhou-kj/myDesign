@@ -9,8 +9,8 @@ const expressJoi = require('@escook/express-joi')
 const { shopsAdd_schema, shopsRevise_schema, shopsDel_schema } = require('../schema/shops')
 
 router.get('/shops', shopsHandler.shops)
-router.post('/shopsAdd', expressJoi(shopsAdd_schema), shopsHandler.shopsAdd)
+router.put('/shopsAdd', expressJoi(shopsAdd_schema), shopsHandler.shopsAdd)
 router.post('/shopsRevise', expressJoi(shopsRevise_schema), shopsHandler.shopsRevise)
-router.delete('/shopsDel', expressJoi(shopsDel_schema), shopsHandler.shopsDel)
+router.post('/shopsDel', expressJoi(shopsDel_schema), shopsHandler.shopsDel)
 
 module.exports = router

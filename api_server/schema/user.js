@@ -9,6 +9,7 @@ const userPhone = joi.string().pattern(/^(13[0-9]|14[01456879]|15[0-35-9]|16[256
 const userIDNumber = joi.string().pattern(/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/).error(new Error('身份证号无效'))
 const oldPassword = joi.string().required().error(new Error('原密码无效'))
 const newPassword = joi.string().required().error(new Error('新密码无效'))
+const userID = joi.string().required().error(new Error('店员ID无效'))
 
 exports.passwordRevise_schema = {
   body: {
@@ -31,6 +32,7 @@ exports.userAdd_schema = {
 
 exports.userRevise_schema = {
   body: {
+    userID,
     userName,
     userPassword,
     userAge,

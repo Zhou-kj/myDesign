@@ -46,56 +46,62 @@ exports.passwordRevise = (req, res) => {
 
 exports.userAdd = (req, res) => {
   const userInfo = req.body
-  const requestor = jwt.verify(req.headers.authorization.replace('Bearer ', ''), config.jwtSecretKey)
+  console.log(userInfo);
+  const requestor = req.headers.authorization.replace('Bearer ', '')
   const role = '1'
-  const belong = requestor.userBelong
 
-  const sql = 'select * from users where userPhone = ?'
-  db.query(sql, [userInfo.userPhone], function(err, results) {
-    if (err) {
-      return res.send(err)
-    }
-    if (results.length > 0) {
-      return res.cc('电该号码被占用，请更换号码！')
-    }
-    userInfo.password = bcrypt.hashSync(userInfo.password, 10)
-
-    const sqlAdd = 'insert into users set ?'
-    db.query(sqlAdd, { userName: userInfo.userName, userSex: userInfo.userSex, userFace: '', userPassword: userInfo.password, userAge: userInfo.userAge, userPhone: userInfo.userPhone, userIDNumber: userInfo.userIDNumber, userBelong: belong, userRole: role }, function(err, results) {
+  jwt.verify(requestor, config.jwtSecretKey, function (err, data) {
+    const belong = data.userBelong
+    const sql = 'select * from users where userPhone = ?'
+    db.query(sql, [userInfo.userPhone], function(err, results) {
       if (err) {
-        return res.cc(err)
+        return res.send(err)
       }
-      if (results.affectedRows !== 1) {
-        return res.cc('添加店员失败，请稍后再试！')
+      if (results.length > 0) {
+        return res.cc('电该号码被占用，请更换号码！')
       }
-      res.send( { status: 0, message: '添加成功！'})
+      userInfo.userPassword = bcrypt.hashSync(userInfo.userPassword, 10)
+      const sqlAdd = 'insert into users set ?'
+      db.query(sqlAdd, { userName: userInfo.userName, userSex: userInfo.userSex, userFace: '', userPassword: userInfo.userPassword, userAge: userInfo.userAge, userPhone: userInfo.userPhone, userIDNumber: userInfo.userIDNumber, userBelong: belong, userRole: role }, function(err, results) {
+        if (err) {
+          return res.cc(err)
+        }
+        if (results.affectedRows !== 1) {
+          return res.cc('添加店员失败，请稍后再试！')
+        }
+        res.send( { status: 0, message: '添加成功！'})
+      })
     })
   })
 }
 
 exports.user = (req, res) => {
-  const requestor = jwt.verify(req.headers.authorization.replace('Bearer ', ''), config.jwtSecretKey)
-  const sql = 'select userName, userSex, userFace, userAge, userPhone, userIDNumber from users where userBelong = ?'
-  db.query(sql, [requestor.userBelong], function(err, results) {
-    if (err) {
-      return res.cc(err)
-    }
-    res.send( {
-      status: 0,
-      message: '查询员工完成',
-      data: results
-    } )
+  const requestor = req.headers.authorization.replace('Bearer ', '')
+  jwt.verify(requestor, config.jwtSecretKey, function(err, data) {
+    const sql = 'select userID, userName, userSex, userFace, userAge, userPhone, userIDNumber, userBelong from users where userBelong = ?'
+    console.log(data);
+    db.query(sql, [data.userBelong], function(err, results) {
+      if (err) {
+        return res.cc(err)
+      }
+      res.send( {
+        status: 0,
+        message: '查询员工完成',
+        data: results
+      } )
+    })
   })
 }
 
 exports.userRevise = (req, res) => {
   const userInfo = req.body
-  const sql = 'update users set userName = ?, userSex = ?, userFace = ?, userAge = ?, userPhone = ?, userIDNumber = ? where userName = ?'
-  db.query(sql, [userInfo.userName, userInfo.userSex, '', userInfo.userAge, userInfo.userPhone, userInfo.userIDNumber, userInfo.userName], function(err, results) {
+  userInfo.userPassword = bcrypt.hashSync(userInfo.userPassword, 10)
+  const sql = 'update users set userName = ?, userSex = ?, userFace = ?, userAge = ?, userPhone = ?, userIDNumber = ?, userPassword = ? where userID = ?'
+  db.query(sql, [userInfo.userName, userInfo.userSex, '', userInfo.userAge, userInfo.userPhone, userInfo.userIDNumber, userInfo.userPassword, userInfo.userID], function(err, results) {
     if (err) {
       return res.cc(err)
     }
-    if (results.length !== 1) {
+    if (results.affectedRows !== 1) {
       return res.cc('修改失败，请重试！')
     }
     res.send({status: 0, message: '修改成功！'})
@@ -104,6 +110,7 @@ exports.userRevise = (req, res) => {
 
 exports.userDel = (req, res) => {
   const userInfo = req.body
+  console.log(userInfo);
   const sql = 'delete from users where userPhone = ?'
   db.query(sql, [userInfo.userPhone], function (err, results) {
     if (err) {
@@ -136,6 +143,7 @@ exports.login = (req, res) => {
       return res.cc('登录失败！密码错误')
     }
     const user = { ...results[0], userPassword: '', }
+    console.log(user);
     const tokenStr = jwt.sign(user, config.jwtSecretKey, {
       expiresIn: '12h',
     })
