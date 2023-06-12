@@ -62,7 +62,7 @@ exports.userAdd = (req, res) => {
       }
       userInfo.userPassword = bcrypt.hashSync(userInfo.userPassword, 10)
       const sqlAdd = 'insert into users set ?'
-      db.query(sqlAdd, { userName: userInfo.userName, userSex: userInfo.userSex, userFace: '', userPassword: userInfo.userPassword, userAge: userInfo.userAge, userPhone: userInfo.userPhone, userIDNumber: userInfo.userIDNumber, userBelong: belong, userRole: role }, function(err, results) {
+      db.query(sqlAdd, { userName: userInfo.userName, userSex: userInfo.userSex, userPassword: userInfo.userPassword, userAge: userInfo.userAge, userPhone: userInfo.userPhone, userIDNumber: userInfo.userIDNumber, userBelong: belong, userRole: role }, function(err, results) {
         if (err) {
           return res.cc(err)
         }
@@ -78,7 +78,7 @@ exports.userAdd = (req, res) => {
 exports.user = (req, res) => {
   const requestor = req.headers.authorization.replace('Bearer ', '')
   jwt.verify(requestor, config.jwtSecretKey, function(err, data) {
-    const sql = 'select userID, userName, userSex, userFace, userAge, userPhone, userIDNumber, userBelong from users where userBelong = ?'
+    const sql = 'select userID, userName, userSex, userAge, userPhone, userIDNumber, userBelong from users where userBelong = ? and userRole != 2'
     console.log(data);
     db.query(sql, [data.userBelong], function(err, results) {
       if (err) {
@@ -96,8 +96,8 @@ exports.user = (req, res) => {
 exports.userRevise = (req, res) => {
   const userInfo = req.body
   userInfo.userPassword = bcrypt.hashSync(userInfo.userPassword, 10)
-  const sql = 'update users set userName = ?, userSex = ?, userFace = ?, userAge = ?, userPhone = ?, userIDNumber = ?, userPassword = ? where userID = ?'
-  db.query(sql, [userInfo.userName, userInfo.userSex, '', userInfo.userAge, userInfo.userPhone, userInfo.userIDNumber, userInfo.userPassword, userInfo.userID], function(err, results) {
+  const sql = 'update users set userName = ?, userSex = ?, userAge = ?, userPhone = ?, userIDNumber = ?, userPassword = ? where userID = ?'
+  db.query(sql, [userInfo.userName, userInfo.userSex, userInfo.userAge, userInfo.userPhone, userInfo.userIDNumber, userInfo.userPassword, userInfo.userID], function(err, results) {
     if (err) {
       return res.cc(err)
     }

@@ -38,3 +38,8 @@ exports.memberRevise_schema = {
 exports.memberDel_schema = {
   memberID,
 }
+
+exports.memberVerify_schema = {
+  memberPassword,
+  memberPhone,
+}

@@ -35,7 +35,7 @@ exports.shopsAdd = (req, res) => {
 
         const sqlAdd = 'insert into users set ?'
         shopsInfo.shopShopOwnerPassword = bcrypt.hashSync(shopsInfo.shopShopOwnerPassword, 10)
-        db.query(sqlAdd, { userName: shopsInfo.shopShopOwnerName, userSex: shopsInfo.shopShopOwnerSex, userFace: '', userPassword: shopsInfo.shopShopOwnerPassword, userAge: shopsInfo.shopShopOwnerAge, userPhone: shopsInfo.shopShopOwnerPhone, userIDNumber: shopsInfo.shopShopOwnerID, userBelong: shopsInfo.shopIDNumber, userRole: role }, function(err, results) {
+        db.query(sqlAdd, { userName: shopsInfo.shopShopOwnerName, userSex: shopsInfo.shopShopOwnerSex, userPassword: shopsInfo.shopShopOwnerPassword, userAge: shopsInfo.shopShopOwnerAge, userPhone: shopsInfo.shopShopOwnerPhone, userIDNumber: shopsInfo.shopShopOwnerID, userBelong: shopsInfo.shopIDNumber, userRole: role }, function(err, results) {
           if (err) {
             return res.cc(err)
           }
@@ -62,8 +62,8 @@ exports.shopsRevise = (req, res) => {
       return res.cc('店铺信息修改失败，请重试！')
     }
     userInfo.userPassword = bcrypt.hashSync(userInfo.userPassword, 10)
-    const sql = 'update users set userName = ?, userSex = ?, userFace = ?, userAge = ?, userPhone = ?, userIDNumber = ?, userPassword = ? where userID = ?'
-    db.query(sql, [userInfo.userName, userInfo.userSex, '', userInfo.userAge, userInfo.userPhone, userInfo.userIDNumber, userInfo.userPassword, userInfo.userID], function(err, results) {
+    const sql = 'update users set userName = ?, userSex = ?, userAge = ?, userPhone = ?, userIDNumber = ?, userPassword = ? where userID = ?'
+    db.query(sql, [userInfo.userName, userInfo.userSex, userInfo.userAge, userInfo.userPhone, userInfo.userIDNumber, userInfo.userPassword, userInfo.userID], function(err, results) {
       if (err) {
         return res.cc(err)
       }
@@ -116,7 +116,7 @@ exports.shopsDel = (req, res) => {
 }
 
 exports.shops = (req, res) => {
-  const sql = 'select shopID, shopAddress, shopIDNumber, shopShopOwnerName, shopShopOwnerFace, shopShopOwnerSex, shopShopOwnerPhone, shopShopOwnerAge, shopShopOwnerID from shops'
+  const sql = 'select shopID, shopAddress, shopIDNumber, shopShopOwnerName, shopShopOwnerSex, shopShopOwnerPhone, shopShopOwnerAge, shopShopOwnerID from shops'
   db.query(sql, function(err, results) {
     if (err) {
       return res.cc(err)

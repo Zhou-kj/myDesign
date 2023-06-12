@@ -1,12 +1,15 @@
 const joi = require('joi')
 
-const goodsPrice = joi.string().pattern(/(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/)
-const goodsNumber = joi.string().pattern(/^\d{n}$/)
-const goodsName = joi.string()
-const goodsQuantity = joi.string().pattern(/^[0-9]*$/)
-const goodsSize = joi.string()
-const memberPhone = joi.string().pattern(/^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/)
-const memberPassword = joi.string().min(1).max(10).required()
+const goodsPrice = joi.string().pattern(/(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/).error(new Error('商品价格无效'))
+const goodsNumber = joi.string().error(new Error('商品编号无效'))
+const goodsName = joi.string().error(new Error('商品名称无效'))
+const goodsQuantity = joi.string().pattern(/^[0-9]*$/).error(new Error('商品数量无效'))
+const goodsSize = joi.string().error(new Error('商品尺寸无效'))
+const goodsType = joi.string().error(new Error('商品种类无效'))
+const num = joi.string().pattern(/^[0-9]*$/).error(new Error('商品数量无效'))
+const memberPhone = joi.string().allow(null, '').error(new Error('会员号码无效'))
+const goodsID = joi.string().error(new Error('商品ID无效'))
+const discount = joi.string().error(new Error('商品折扣无效'))
 
 exports.goodsDiscount_schema = {
   body: {
@@ -15,23 +18,29 @@ exports.goodsDiscount_schema = {
   }
 }
 
-exports.goods_schema = {
+exports.goodsRevise_schema = {
   query: {
-    goodsMinPrice: goodsPrice,
-    goodsMaxPrice: goodsPrice,
+    goodsPrice,
+    goodsType,
     goodsNumber,
     goodsName,
     goodsQuantity,
-    goodsSize
+    goodsSize,
+    goodsID,
   }
 }
 
-exports.goodsBusiness_schema = {
-  body: {
-    memberPhone,
-    memberPassword,
-    goodsSize,
-    goodsNumber,
-    goodsQuantity,
-  }
-}
+// exports.goodsBusiness_schema = {
+//   body: {
+//     goodsInformation: joi.array().items({
+//       num,
+//       goodsPrice,
+//       goodsSize,
+//       goodsNumber,
+//       goodsQuantity,
+//       goodsName,
+//       discount,
+//     }),
+//     memberPhone,
+//   }
+// }

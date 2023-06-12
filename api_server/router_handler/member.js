@@ -1,5 +1,27 @@
 const db = require('../db/index')
 
+exports.memberVerify = (req, res) => {
+  const userInfo = req.body
+  const sql = 'select * from members where memberPhone = ? and memberPassword = ?'
+  db.query(sql, [userInfo.memberPhone, userInfo.memberPassword], function(err, results) {
+    if (err) {
+      return res.cc(err)
+    }
+    if (results.length != 1) {
+      return res.send({
+        status: 1,
+        message: '会员电话或密码错误，请重试',
+        data: false
+      })
+    }
+    res.send({
+      status: 0,
+      message: '会员验证通过',
+      data: true
+    })
+  })
+}
+
 exports.member = (req, res) => {
   const sql = 'select * from members'
   db.query(sql, function (err, results) {
@@ -38,7 +60,6 @@ exports.memberAdd = (req, res) => {
       })
     })
   })
-
 }
 
 exports.memberSelect = (req, res) => {

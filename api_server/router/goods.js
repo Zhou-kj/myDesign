@@ -6,11 +6,13 @@ const goodsHandler = require('../router_handler/goods')
 
 const expressJoi = require('@escook/express-joi')
 
-const { goods_schema, goodsDiscount_schema, goodsBusiness_schema } = require('../schema/goods')
+const { goodsDiscount_schema, goodsRevise_schema } = require('../schema/goods')
 
 
-router.get('/goods', expressJoi(goods_schema), goodsHandler.goods)
+router.get('/goods', goodsHandler.goods)
 router.post('/goodsDiscount', expressJoi(goodsDiscount_schema), goodsHandler.goodsDiscount)
-router.post('/goodsBusiness', expressJoi(goodsBusiness_schema), goodsHandler.goodsBusiness)
+router.post('/goodsBusiness', goodsHandler.goodsBusiness)
+router.post('/goodsRevise', expressJoi(goodsRevise_schema), goodsHandler.goodsRevise)
+router.post('/import', goodsHandler.import)
 
 module.exports = router

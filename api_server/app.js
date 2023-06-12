@@ -1,6 +1,8 @@
 const express = require('express')
-
+const bodyParser = require('body-parser')
 const cors = require('cors')
+
+const multer = require('multer')
 
 const app = express()
 
@@ -19,6 +21,25 @@ const joi = require('joi')
 app.use(cors())
 
 app.use(express.urlencoded({ extended: false}))
+
+// 解析 application/json
+app.use(bodyParser.json())
+// 解析 application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded())
+
+// const upload = multer({dest: 'uploads/'})
+// app.use(upload.single('file'))
+let storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/')
+  },
+  filename: (req, file, cb) => {
+    filename = '服装进货表-'+Date.now()+'.xlsx'
+    cb(null, filename)
+  }
+})
+let upload = multer({storage})
+app.use(upload.single('file'))
 
 app.use(function(req, res, next) {
   res.cc = function (err, status = 1) {
